@@ -1,19 +1,7 @@
 import { createHash } from "node:crypto";
 
 import { hash, isValidHash } from "./hepers";
-
-export interface Block {
-    header: {
-        nounce: number;
-        hash: string;
-    },
-    payload: {
-        sequence: number;
-        timestamp: number;
-        data: any;
-        previousHash: string;
-    }
-};
+import { Block } from "./types";
 
 export class Blockchain {
     private powPrefix = "0";
