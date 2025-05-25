@@ -273,3 +273,7 @@ Rodando com dificuldade 3 e minerando 5 blocos:
 ```bash
 npm run start -- 3 5
 ```
+
+## Créditos
+
+Esse projeto foi implementado seguindo o vídeo do [:link: **Lucas Santos**](https://www.youtube.com/watch?v=ztQEaQ06GYs)
