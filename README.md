@@ -127,9 +127,7 @@ flowchart TD
     Invalid --> TryNonce
     Valid --> End
 ```
-## :hammer_and_wrench: Implementação
-
-### 🌳 Árvore de Hash (Merkle Tree)
+#### 🌳 Árvore de Hash (Merkle Tree)
 Em uma blockchain, os dados de transações dentro de um bloco são organizados usando uma estrutura chamada Merkle Tree (ou Árvore de Merkle). Essa estrutura permite:
 - Verificar se uma transação pertence a um bloco sem precisar verificar todas as outras.
 - Garantir que os dados da transação não foram alterados.
@@ -156,13 +154,13 @@ graph TD
     H2 --> Root
 ```
 
-#### 🛡️ Proteção contra Fraude
+##### 🛡️ Proteção contra Fraude
 A Merkle Tree protege a blockchain da seguinte forma:
 - Cada transação é criptografada com uma função de hash.
 - As hashes são combinadas duas a duas até chegar à Root Hash, que representa todo o conjunto de transações.
 - Se qualquer transação for alterada, a hash da transação muda, afetando todas as hashes subsequentes até a raiz.
 
-#### ⚠️ O que acontece se alguém tentar fraudar?
+##### ⚠️ O que acontece se alguém tentar fraudar?
 Se um nó malicioso tentar modificar uma transação dentro do bloco, ele terá que:
 - Recalcular a hash da transação.
 - Recalcular todas as hashes intermediárias até a Root Hash.
@@ -185,8 +183,93 @@ flowchart LR
     Main1 --> Fork2 --> Fork3
 ```
 
-#### ✅ Resultado
+##### ✅ Resultado
 Graças à estrutura em árvore de hashes:
 - A integridade de cada transação pode ser verificada individualmente.
 - A tentativa de fraude é detectável e praticamente inviável.
 > 📚 Essa estrutura foi descrita pela primeira vez por Ralph Merkle em 1979 e é um dos pilares da segurança da blockchain.
+
+## :hammer_and_wrench: Implementação
+Nesse projeto existem apenas 3 arquivos: src/index.ts arquivo onde iniciamos nossa block chain, src/helpers.ts arquivo onde colocamos funções comuns no sistema e src/blockchain.ts onde implementamos nossa blockchain.
+
+### 🧱 Classe Blockchain
+A classe ```Blockchain``` representa uma cadeia de blocos com suporte a Proof of Work (PoW). Cada bloco é composto por um cabeçalho com um hash e nonce, e um payload com os dados e informações de sequência.
+
+#### 🔧 Construtor
+```ts
+new Blockchain(difficulty?: number)
+```
+- difficulty (opcional): Número de zeros com os quais o hash deve começar para ser considerado válido. Valor padrão: 4.
+
+#### 📦 Métodos
+```getChain: Block[]```
+Retorna todos os blocos da blockchain.
+
+```createBlock(data: any): Block["payload"]```
+Cria um novo payload de bloco com os dados fornecidos.
+- ```data```: Dados genéricos que serão armazenados no bloco.
+- Retorna o payload pronto para ser minerado.
+
+```mineBlock(payload: Block["payload"]): Block```
+Realiza a mineração do bloco, encontrando um ```nounce``` válido que satisfaz a dificuldade.
+- ```payload```: O conteúdo do bloco a ser minerado.
+- Retorna o bloco completo com header e payload.
+
+```verifyBlock(block: Block): boolean```
+Valida se o bloco é consistente com a blockchain atual.
+- Verifica se o ```previousHash``` confere com o último bloco.
+- Valida se o ```nounce``` realmente gera o hash esperado.
+- Retorna true se o bloco for válido.
+
+```addBlock(block: Block): Block[]```
+Adiciona um bloco à cadeia após verificar sua validade.
+- Retorna a cadeia de blocos atualizada.
+
+#### 🧪 Estrutura do Bloco
+```ts
+interface Block {
+  header: {
+    nounce: number;
+    hash: string;
+  },
+  payload: {
+    sequence: number;
+    timestamp: number;
+    data: any;
+    previousHash: string;
+  }
+}
+```
+
+#### 🌱 Bloco Gênesis
+Ao iniciar a blockchain, o primeiro bloco é automaticamente criado com o nome Genesis Block, sem previousHash.
+
+#### ⛏️ Proof of Work (PoW)
+A mineração é baseada no algoritmo PoW: um nounce é incrementado até que o hash resultante do payload mais esse número comece com n zeros, de acordo com a dificuldade.
+
+### 🚀 Como rodar o projeto
+Antes de iniciar, certifique-se de ter o [Node.js](https://nodejs.org/) instalado na sua máquina.
+
+1. Instale as dependências
+
+```bash
+npm install
+```
+2. Compile o projeto
+```bash
+npm run build
+```
+3. Execute o projeto
+A aplicação pode receber dois parâmetros:
+```dificuldade```: número de zeros que o hash final deve conter no início (ex: 2, 3, 4...)
+
+```blocos```: número de blocos que devem ser minerados (ex: 5, 10, 20...)
+
+```bash
+npm run start -- [dificuldade] [blocos]
+```
+Exemplo:
+Rodando com dificuldade 3 e minerando 5 blocos:
+```bash
+npm run start -- 3 5
+```
