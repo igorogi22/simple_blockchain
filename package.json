@@ -5,7 +5,8 @@
   "author": "Igor Marcelino <igorvinicius.oli@gmail.com>",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "start:dev": "ts-node src/index.ts"
   },
   "keywords": [
     "blockchain",
@@ -15,7 +16,11 @@
   "license": "MIT",
   "description": "",
   "devDependencies": {
+    "@types/ws": "^8.18.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "ws": "^8.18.2"
   }
 }
