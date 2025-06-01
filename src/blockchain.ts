@@ -1,19 +1,7 @@
 import { createHash } from "node:crypto";
 
 import { hash, isValidHash } from "./hepers";
-
-export interface Block {
-    header: {
-        nounce: number;
-        hash: string;
-    },
-    payload: {
-        sequence: number;
-        timestamp: number;
-        data: any;
-        previousHash: string;
-    }
-};
+import { Block } from "./types";
 
 export class Blockchain {
     private powPrefix = "0";
@@ -61,7 +49,7 @@ export class Blockchain {
             previousHash: this.lastBlockHash,
         }
 
-        console.log(`Block ${newBlock.sequence} created!\n`, JSON.stringify(newBlock));
+        console.log(`Block ${newBlock.sequence} created!\n${JSON.stringify(newBlock)}\nwaiting for mining...`);
         return newBlock;
     }
 
@@ -118,5 +106,16 @@ export class Blockchain {
         }
 
         return this.#chain;
+    }
+
+    replaceChain(newChain: Block[]): void {
+        console.log({ newChainLength: newChain.length, chainLength: this.#chain.length})
+        if (newChain.length <= this.#chain.length) {
+            console.log('Received chain is not longuer than current chain');
+            return;
+        }
+
+        console.log('Replacing current chain with new chain');
+        this.#chain = newChain;
     }
 }
